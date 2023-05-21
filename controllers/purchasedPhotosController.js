@@ -1,12 +1,16 @@
-// 사용자가 구매한 사진들을 가져오는 함수를 정의합니다.
 exports.getPurchasedPhotos = async (req, res) => {
     try {
-        // 요청으로부터 사용자 주소를 가져와 블록체인에서 해당 사용자가 구매한 사진들을 조회합니다.
-        const purchasedPhotos = await getPurchasedPhotosFromBlockchain(req.body.userAddress);
-        // 조회한 사진들을 응답으로 보냅니다.
+        // Request body에 userAddress가 포함되어 있는지 확인합니다.
+        validateRequestBody(req.body, ['userAddress']);
+
+        const userAddress = req.body.userAddress;
+        const nftCollection = await getNFTCollectionFromBlockchain(userAddress);
+
+        const purchasedPhotos = nftCollection.filter(nft => nft.type === 'photo');
+
         res.send(purchasedPhotos);
     } catch (error) {
         // 에러가 발생한 경우 에러 메시지를 반환합니다.
-        res.status(500).send({ message: error.message });
+        handleBlockchainError(res, error);
     }
 };

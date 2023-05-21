@@ -7,42 +7,92 @@ const transactionHistoryController = require('./controllers/transactionHistoryCo
 const coinBalanceController = require('./controllers/coinBalanceController');
 const purchasedPhotosController = require('./controllers/purchasedPhotosController');
 
+// Middleware for error handling
+const handleError = fn => (req, res, next) =>
+    Promise
+        .resolve(fn(req, res, next))
+        .catch(next);
+
 // 회원가입 처리 라우트
-router.post('/register', (req, res, next) => {
+router.post('/register', handleError(async (req, res) => {
     // 1. 클라이언트의 요청에서 회원가입 정보를 받아옵니다.
+    const { email, username, password } = req.body;
+
     // 2. 회원가입 정보가 유효한지 확인합니다.
-    // 3. 회원가입 정보를 데이터베이스에 저장합니다.
-    // 4. 회원가입 결과를 클라이언트에 보냅니다.
-    // 추가 구현: 비밀번호 암호화, 이메일 인증 등의 보안 및 신뢰성 강화 기능을 구현하면 좋을 것입니다.
-});
+    if (!email || !username || !password) {
+        return res.status(400).send({
+            message: 'Invalid request body',
+        });
+    }
+
+    // 3. MetaMask 지갑을 연결합니다.
+    const accounts = await web3Controller.getAccounts();
+    if (accounts.length === 0) {
+        return res.status(401).send({
+            message: 'Please connect a MetaMask wallet',
+        });
+    }
+
+    // 4. 사용자 이름이 이미 있는지 확인합니다.
+    const user = await web3Controller.getUserByUsername(username);
+    if (user) {
+        return res.status(409).send({
+            message: 'Username already exists',
+        });
+    }
+
+    // 5. 사용자를 블록체인에 등록합니다.
+    const transactionHash = await web3Controller.registerUser(email, username, password);
+
+    // 6. 사용자를 클라이언트에 반환합니다.
+    return res.status(201).send({
+        transactionHash,
+    });
+}));
 
 // 사진 업로드 처리 라우트
-router.post('/upload-photo', (req, res, next) => {
+router.post('/upload-photo', handleError(async (req, res) => {
     // 1. 클라이언트의 요청에서 업로드할 사진 데이터를 받아옵니다.
-    // 2. 사진 데이터를 서버에 저장합니다.
-    // 3. 사진 업로드 결과를 클라이언트에 보냅니다.
-    // 추가 구현: 사진 파일 크기 및 형식 제한, 악성 코드 검사 등의 보안 기능을 구현하면 좋을 것입니다.
-});
+    const { file } = req.body;
+
+    // 2. 사진 데이터를 IPFS에 저장합니다.
+    const ipfsHash = await web3Controller.uploadPhotoToIPFS(file);
+
+    // 3. 사진 정보를 블록체인에 등록합니다.
+    const transactionHash = await web3Controller.registerPhoto(ipfsHash);
+
+    // 4. 사진 업로드 결과를 클라이언트에 보냅니다.
+    return res.status(201).send({
+        transactionHash,
+    });
+}));
 
 // NFT 등록 처리 라우트
-router.post('/register-nft', (req, res, next) => {
+router.post('/register-nft', handleError(async (req, res) => {
     // 1. 클라이언트의 요청에서 NFT로 등록할 사진 정보를 받아옵니다.
-    // 2. 블록체인에 NFT를 생성하고 사진 정보를 등록합니다.
-    // 3. NFT 등록 결과를 클라이언트에 보냅니다.
-    // 추가 구현: NFT의 유일성 검증, 적절한 gas fee 계산 등의 블록체인 특성을 고려한 기능을 구현하면 좋을 것입니다.
-});
+    const { ipfsHash, price } = req.body;
+
+    // 2. NFT를 생성합니다.
+    const tokenId = await web3Controller.createNFT(ipfsHash, price);
+
+    // 3. NFT를 블록체인에 등록합니다.
+    const transactionHash = await web3Controller.registerNFT(tokenId);
+
+    // 4. NFT 등록 결과를 클라이언트에 보냅니다.
+    return res.status(201).send({
+        transactionHash,
+    });
+}));
 
 // NFT 구매, 업데이트, 삭제 처리 라우트
-router.post('/buy', marketplaceController.buyNFT);
-router.post('/update', marketplaceController.updateNFT);
-router.post('/delete', marketplaceController.deleteNFT);
-// 추가 구현: NFT의 소유권 검증, 거래 내역 기록 등의 기능을 구현하면 좋을 것입니다.
+router.post('/buy', handleError(marketplaceController.buyNFT));
+router.post('/update', handleError(marketplaceController.updateNFT));
+router.post('/delete', handleError(marketplaceController.deleteNFT));
 
 // 사용자 프로필, 거래 내역, 코인 잔액, 구매한 사진 조회 라우트
-router.get('/profile', profileController.getProfile);
-router.get('/transaction-history', transactionHistoryController.getTransactionHistory);
-router.get('/coin-balance', coinBalanceController.getCoinBalance);
-router.get('/purchased-photos', purchasedPhotosController.getPurchasedPhotos);
-// 추가 구현: 페이징, 검색, 필터링 등의 사용자 편의성 강화 기능을 구현하면 좋을 것입니다.
+router.get('/profile', handleError(profileController.getProfile));
+router.get('/transaction-history', handleError(transactionHistoryController.getTransactionHistory));
+router.get('/coin-balance', handleError(coinBalanceController.getCoinBalance));
+router.get('/purchased-photos', handleError(purchasedPhotosController.getPurchasedPhotos));
 
 module.exports = router;
