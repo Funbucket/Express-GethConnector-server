@@ -1,3 +1,4 @@
+// 필요한 모듈들을 가져옵니다.
 const express = require('express');
 const router = express.Router();
 const web3Controller = require('../controllers/web3Controller');
@@ -7,15 +8,15 @@ const transactionHistoryController = require('./controllers/transactionHistoryCo
 const coinBalanceController = require('./controllers/coinBalanceController');
 const purchasedPhotosController = require('./controllers/purchasedPhotosController');
 
-// Middleware for error handling
+// 에러 처리를 위한 미들웨어를 정의합니다.
 const handleError = fn => (req, res, next) =>
     Promise
         .resolve(fn(req, res, next))
         .catch(next);
 
-// 회원가입 처리 라우트
+// 회원가입 처리를 위한 라우트를 정의합니다.
 router.post('/register', handleError(async (req, res) => {
-    // 1. 클라이언트의 요청에서 회원가입 정보를 받아옵니다.
+    // 1. 클라이언트 요청에서 회원가입 정보를 받아옵니다.
     const { email, username, password } = req.body;
 
     // 2. 회원가입 정보가 유효한지 확인합니다.
@@ -33,7 +34,7 @@ router.post('/register', handleError(async (req, res) => {
         });
     }
 
-    // 4. 사용자 이름이 이미 있는지 확인합니다.
+    // 4. 사용자 이름이 이미 사용 중인지 확인합니다.
     const user = await web3Controller.getUserByUsername(username);
     if (user) {
         return res.status(409).send({
@@ -50,9 +51,9 @@ router.post('/register', handleError(async (req, res) => {
     });
 }));
 
-// 사진 업로드 처리 라우트
+// 사진 업로드 처리를 위한 라우트를 정의합니다.
 router.post('/upload-photo', handleError(async (req, res) => {
-    // 1. 클라이언트의 요청에서 업로드할 사진 데이터를 받아옵니다.
+    // 1. 클라이언트 요청에서 업로드할 사진 데이터를 받아옵니다.
     const { file } = req.body;
 
     // 2. 사진 데이터를 IPFS에 저장합니다.
@@ -67,9 +68,9 @@ router.post('/upload-photo', handleError(async (req, res) => {
     });
 }));
 
-// NFT 등록 처리 라우트
+// NFT 등록 처리를 위한 라우트를 정의합니다.
 router.post('/register-nft', handleError(async (req, res) => {
-    // 1. 클라이언트의 요청에서 NFT로 등록할 사진 정보를 받아옵니다.
+    // 1. 클라이언트 요청에서 NFT로 등록할 사진 정보를 받아옵니다.
     const { ipfsHash, price } = req.body;
 
     // 2. NFT를 생성합니다.
@@ -84,15 +85,16 @@ router.post('/register-nft', handleError(async (req, res) => {
     });
 }));
 
-// NFT 구매, 업데이트, 삭제 처리 라우트
+// NFT 구매, 업데이트, 삭제 처리를 위한 라우트를 정의합니다.
 router.post('/buy', handleError(marketplaceController.buyNFT));
 router.post('/update', handleError(marketplaceController.updateNFT));
 router.post('/delete', handleError(marketplaceController.deleteNFT));
 
-// 사용자 프로필, 거래 내역, 코인 잔액, 구매한 사진 조회 라우트
+// 사용자 프로필, 거래 내역, 코인 잔액, 구매한 사진 조회를 위한 라우트를 정의합니다.
 router.get('/profile', handleError(profileController.getProfile));
 router.get('/transaction-history', handleError(transactionHistoryController.getTransactionHistory));
 router.get('/coin-balance', handleError(coinBalanceController.getCoinBalance));
 router.get('/purchased-photos', handleError(purchasedPhotosController.getPurchasedPhotos));
 
+// 라우터를 모듈로 내보냅니다.
 module.exports = router;
