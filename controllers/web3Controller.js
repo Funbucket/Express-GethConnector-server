@@ -1,44 +1,32 @@
 const Web3 = require('web3');
-const { HTTP_STATUS_CODES } = require('../constants');
+const constants = require('../constants');
+const fs = require('fs');
+const solc = require('solc');
 
-// Web3 인스턴스 생성 함수
-function getWeb3() {
-    const web3 = new Web3(new Web3.providers.HttpProvider('http://168.188.129.230:8080'));
-    return web3;
-}
-
-// 계좌 목록을 가져오는 컨트롤러 함수
-exports.getAccounts = async (req, res, next) => {
-    try {
-        const accounts = await getWeb3().eth.getAccounts();
-        res.send(accounts);
-    } catch (e) {
-        console.log(e);
-        e.status = HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR;
-        next(e);
-    }
+// 기존 코드...
+exports.createWeb3Instance = () => {
+    return new Web3(new Web3.providers.HttpProvider(constants.INFURA_URI));
 };
 
-// 가스 가격을 가져오는 컨트롤러 함수
-exports.getGasPrice = async (req, res, next) => {
-    try {
-        const gasPrice = await getWeb3().eth.getGasPrice();
-        res.send(gasPrice);
-    } catch (e) {
-        console.log(e);
-        e.status = HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR;
-        next(e);
-    }
+exports.getContractInstance = (web3, contractPath, contractName) => {
+    const source = fs.readFileSync(contractPath, 'utf8');
+    const compiledContract = solc.compile(source, 1);
+    const contractABI = compiledContract.contracts[`:${contractName}`].interface;
+
+    return new web3.eth.Contract(JSON.parse(contractABI), constants.CONTRACT_ADDRESS);
 };
 
-// 최신 블록 정보를 가져오는 컨트롤러 함수
-exports.getBlock = async (req, res, next) => {
-    try {
-        const getBlock = await getWeb3().eth.getBlock("latest");
-        res.send(getBlock);
-    } catch (e) {
-        console.log(e);
-        e.status = HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR;
-        next(e);
-    }
+exports.buyPhotoNFT = (contract, buyerAddress, tokenId, price) => {
+    return contract.methods.buyPhotoNFT(tokenId)
+        .send({ from: buyerAddress, value: price, gas: constants.GAS_LIMIT });
+};
+
+exports.updatePhotoNFTPrice = (contract, ownerAddress, tokenId, newPrice) => {
+    return contract.methods.updatePhotoNFTPrice(tokenId, newPrice)
+        .send({ from: ownerAddress, gas: constants.GAS_LIMIT });
+};
+
+exports.deletePhotoNFT = (contract, ownerAddress, tokenId) => {
+    return contract.methods.deletePhotoNFT(tokenId)
+        .send({ from: ownerAddress, gas: constants.GAS_LIMIT });
 };

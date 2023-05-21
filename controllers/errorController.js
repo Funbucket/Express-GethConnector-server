@@ -1,11 +1,9 @@
-// 에러 처리 미들웨어 함수
-module.exports = (err, req, res, next) => {
-    console.error(err.stack);
+exports.handleError = (err, req, res, next) => {
+    err.statusCode = err.statusCode || 500;
+    err.status = err.status || 'error';
 
-    // HTTP 상태 코드와 에러 메시지를 JSON 형식으로 응답
-    res.status(err.status || 500).json({
-        error: {
-            message: err.message || 'Internal Server Error'
-        }
+    res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message
     });
 };
