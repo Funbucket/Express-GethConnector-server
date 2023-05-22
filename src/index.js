@@ -6,10 +6,8 @@ const contract = require("@truffle/contract");
 const contractJSON = require("../build/contracts/NFTPhoto.json");
 
 let NFTPhoto = contract(contractJSON);
-
 const web3Instance =
     require('./controllers/web3Controller').createWeb3Instance();
-const getCoinBalanceFromBlockchain = require('./controllers/web3Controller/getCoinBalanceFromBlockchain');
 
 NFTPhoto.setProvider(web3Instance.currentProvider);
 
