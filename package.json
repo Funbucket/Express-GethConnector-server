@@ -1,0 +1,32 @@
+{
+  "name": "server1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eogml0716/Express-GethConnector.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eogml0716/Express-GethConnector/issues"
+  },
+  "homepage": "https://github.com/eogml0716/Express-GethConnector#readme",
+  "devDependencies": {
+    "jest": "latest"
+  },
+  "dependencies": {
+    "chai": "^4.3.7",
+    "solc": "^0.4.26",
+    "supertest": "^6.3.3"
+  }
+}
