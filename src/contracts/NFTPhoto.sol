@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 // OpenZeppelin 라이브러리의 Smart Contracts를 가져옵니다.
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
