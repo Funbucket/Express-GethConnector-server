@@ -7,6 +7,11 @@ const fs = require('fs');
 // Solidity 컴파일러를 가져옵니다.
 const solc = require('solc');
 
+// Truffle contract를 가져옵니다.
+const contract = require("@truffle/contract");
+// NFTPhoto 컨트랙트 아티팩트를 가져옵니다.
+const contractJSON = require("../build/contracts/NFTPhoto.json");
+
 // Web3 인스턴스를 생성하는 함수를 정의합니다.
 exports.createWeb3Instance = () => {
   // 새로운 Web3 인스턴스를 생성하고 HTTP 프로바이더를 사용하여 이더리움 노드에 연결합니다.
@@ -14,29 +19,21 @@ exports.createWeb3Instance = () => {
 };
 
 // 스마트 계약의 인스턴스를 가져오는 함수를 정의합니다.
-exports.getContractInstance = (web3, contractPath, contractName) => {
-  // 주어진 경로에서 솔리디티 파일을 동기적으로 읽어옵니다.
-  const source = fs.readFileSync(contractPath, 'utf8');
-  // 솔리디티 코드를 컴파일합니다.
-  const compiledContract = solc.compile(source, 1);
-
-  // 컴파일된 계약이 있는지 확인
-  if (
-    !compiledContract.contracts ||
-    !compiledContract.contracts[contractName]
-  ) {
-    throw new Error(`Unable to load contract: ${contractName}`);
-  }
-
-  // 컴파일된 계약에서 ABI(Application Binary Interface)를 가져옵니다.
-  const contractABI = compiledContract.contracts[contractName].interface;
-
-  // 새로운 스마트 계약 인스턴스를 생성하고 반환합니다.
-  return new web3.eth.Contract(
-    JSON.parse(contractABI),
-    constants.CONTRACT_ADDRESS
-  );
+exports.getContractInstance = (web3Instance) => {
+  let NFTPhoto = contract(contractJSON);
+  NFTPhoto.setProvider(web3Instance.currentProvider);
+  return NFTPhoto;
 };
+
+async function getCoinBalanceFromBlockchain(web3Instance, address) {
+  try {
+    const NFTPhoto = exports.getContractInstance(web3Instance);
+    const contractInstance = await NFTPhoto.deployed();
+    // Now use contractInstance to call your contract methods
+  } catch (error) {
+    console.error(`Failed to load contract: ${error}`);
+  }
+}
 
 // 트랜잭션을 보내는 함수를 정의합니다.
 exports.sendTransaction = async (
