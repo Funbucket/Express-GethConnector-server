@@ -1,19 +1,20 @@
 // 필요한 모듈들을 가져옵니다.
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const web3Controller = require("../controllers/web3Controller");
-const marketplaceController = require("../controllers/marketplaceController");
-const profileController = require("../controllers/profileController");
-const transactionHistoryController = require("../controllers/transactionHistoryController");
-const coinBalanceController = require("../controllers/coinBalanceController");
-const purchasedPhotosController = require("../controllers/purchasedPhotosController");
+const web3Controller = require('../controllers/web3Controller');
+const marketplaceController = require('../controllers/marketplaceController');
+const profileController = require('../controllers/profileController');
+const transactionHistoryController = require('../controllers/transactionHistoryController');
+const coinBalanceController = require('../controllers/coinBalanceController');
+const purchasedPhotosController = require('../controllers/purchasedPhotosController');
 
 // 에러 처리를 위한 미들웨어를 정의합니다.
-const handleError = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+const handleError = (fn) => (req, res, next) =>
+  Promise.resolve(fn(req, res, next)).catch(next);
 
 // 회원가입 처리를 위한 라우트를 정의합니다.
 router.post(
-  "/register",
+  '/register',
   handleError(async (req, res) => {
     // 1. 클라이언트 요청에서 회원가입 정보를 받아옵니다.
     const { email, username, password } = req.body;
@@ -21,7 +22,7 @@ router.post(
     // 2. 회원가입 정보가 유효한지 확인합니다.
     if (!email || !username || !password) {
       return res.status(400).send({
-        message: "Invalid request body",
+        message: 'Invalid request body',
       });
     }
 
@@ -29,7 +30,7 @@ router.post(
     const accounts = await web3Controller.getAccounts();
     if (accounts.length === 0) {
       return res.status(401).send({
-        message: "Please connect a MetaMask wallet",
+        message: 'Please connect a MetaMask wallet',
       });
     }
 
@@ -37,12 +38,16 @@ router.post(
     const user = await web3Controller.getUserByUsername(username);
     if (user) {
       return res.status(409).send({
-        message: "Username already exists",
+        message: 'Username already exists',
       });
     }
 
     // 5. 사용자를 블록체인에 등록합니다.
-    const transactionHash = await web3Controller.registerUser(email, username, password);
+    const transactionHash = await web3Controller.registerUser(
+      email,
+      username,
+      password
+    );
 
     // 6. 사용자를 클라이언트에 반환합니다.
     return res.status(201).send({
@@ -53,7 +58,7 @@ router.post(
 
 // 사진 업로드 처리를 위한 라우트를 정의합니다.
 router.post(
-  "/upload-photo",
+  '/upload-photo',
   handleError(async (req, res) => {
     // 1. 클라이언트 요청에서 업로드할 사진 데이터를 받아옵니다.
     const { file } = req.body;
@@ -73,7 +78,7 @@ router.post(
 
 // NFT 등록 처리를 위한 라우트를 정의합니다.
 router.post(
-  "/register-nft",
+  '/register-nft',
   handleError(async (req, res) => {
     // 1. 클라이언트 요청에서 NFT로 등록할 사진 정보를 받아옵니다.
     const { ipfsHash, price } = req.body;
@@ -92,15 +97,21 @@ router.post(
 );
 
 // NFT 구매, 업데이트, 삭제 처리를 위한 라우트를 정의합니다.
-router.post("/buy", handleError(marketplaceController.buyNFT));
-router.post("/update", handleError(marketplaceController.updateNFT));
-router.post("/delete", handleError(marketplaceController.deleteNFT));
+router.post('/buy', handleError(marketplaceController.buyNFT));
+router.post('/update', handleError(marketplaceController.updateNFT));
+router.post('/delete', handleError(marketplaceController.deleteNFT));
 
 // 사용자 프로필, 거래 내역, 코인 잔액, 구매한 사진 조회를 위한 라우트를 정의합니다.
-router.get("/profile", handleError(profileController.getProfile));
-router.get("/transaction-history", handleError(transactionHistoryController.getTransactionHistory));
-router.get("/coin-balance", handleError(coinBalanceController.getCoinBalance));
-router.get("/purchased-photos", handleError(purchasedPhotosController.getPurchasedPhotos));
+router.get('/profile', handleError(profileController.getProfile));
+router.get(
+  '/transaction-history',
+  handleError(transactionHistoryController.getTransactionHistory)
+);
+router.get('/coin-balance', handleError(coinBalanceController.getCoinBalance));
+router.get(
+  '/purchased-photos',
+  handleError(purchasedPhotosController.getPurchasedPhotos)
+);
 
 // 라우터를 모듈로 내보냅니다.
 module.exports = router;
