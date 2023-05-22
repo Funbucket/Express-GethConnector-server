@@ -1,14 +1,12 @@
-const express = require('express'); // Express.js 프레임워크를 가져옵니다.
-const cors = require('cors'); // 웹 애플리케이션 간 자원 공유를 가능하게 하는 CORS(Cross-Origin Resource Sharing)를 위한 패키지를 가져옵니다.
-const apiRoutes = require('./routes/apiRoutes'); // API 라우트 설정을 가져옵니다.
-const errorController = require('./controllers/errorController'); // 에러 처리 컨트롤러를 가져옵니다.
-const contract = require('@truffle/contract');
-const contractJSON = require('../build/contracts/NFTPhoto.json');
-const { swaggerUi, specs } = require('../swagger/swagger');
+import express from 'express'; // Express.js를 위한 패키지를 가져옵니다.
+import cors from 'cors'; // CORS를 위한 패키지를 가져옵니다.
+import { default as apiRoutes } from './routes/apiRoutes.js';
+import contract from '@truffle/contract';
+import { swaggerUi, specs } from '../swagger/swagger.js';
+import { createWeb3Instance } from './controllers/web3Controller.js';
 
-let NFTPhoto = contract(contractJSON);
-const web3Instance =
-  require('./controllers/web3Controller').createWeb3Instance();
+let NFTPhoto = contract('../build/contracts/NFTPhoto.json');
+const web3Instance = createWeb3Instance();
 
 NFTPhoto.setProvider(web3Instance.currentProvider);
 

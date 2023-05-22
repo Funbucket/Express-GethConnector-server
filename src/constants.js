@@ -1,4 +1,4 @@
-module.exports = {
+const constants = {
   // 이더리움 네트워크 설정들입니다.
   networks: {
     development: {
@@ -45,3 +45,5 @@ module.exports = {
     process.env.MNEMONIC ||
     'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat',
 };
+
+export default constants;

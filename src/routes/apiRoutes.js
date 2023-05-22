@@ -1,12 +1,24 @@
-// 필요한 모듈들을 가져옵니다.
-const express = require('express');
-const router = express.Router();
-const web3Controller = require('../controllers/web3Controller');
-const marketplaceController = require('../controllers/marketplaceController');
-const profileController = require('../controllers/profileController');
-const transactionHistoryController = require('../controllers/transactionHistoryController');
-const coinBalanceController = require('../controllers/coinBalanceController');
-const purchasedPhotosController = require('../controllers/purchasedPhotosController');
+import express from 'express';
+const apiRoutes = express.Router();
+
+import {
+  createNFT,
+  getAccounts,
+  getUserByUsername,
+  registerNFT,
+  registerPhoto,
+  registerUser,
+  uploadPhotoToIPFS,
+} from '../controllers/web3Controller.js';
+import {
+  buyNFT,
+  deleteNFT,
+  updateNFT,
+} from '../controllers/marketplaceController.js';
+import getProfile from '../controllers/profileController.js';
+import getTransactionHistory from '../controllers/transactionHistoryController.js';
+import getCoinBalance from '../controllers/coinBalanceController.js';
+import getPurchasedPhotos from '../controllers/purchasedPhotosController.js';
 
 // 에러 처리를 위한 미들웨어를 정의합니다.
 const handleError = (fn) => (req, res, next) =>
@@ -69,7 +81,7 @@ const handleError = (fn) => (req, res, next) =>
  *                 message:
  *                   type: string
  */
-router.post(
+apiRoutes.post(
   '/register',
   handleError(async (req, res) => {
     // 1. 클라이언트 요청에서 회원가입 정보를 받아옵니다.
@@ -83,7 +95,7 @@ router.post(
     }
 
     // 3. MetaMask 지갑을 연결합니다.
-    const accounts = await web3Controller.getAccounts();
+    const accounts = await getAccounts();
     if (accounts.length === 0) {
       return res.status(401).send({
         message: 'Please connect a MetaMask wallet',
@@ -91,7 +103,7 @@ router.post(
     }
 
     // 4. 사용자 이름이 이미 사용 중인지 확인합니다.
-    const user = await web3Controller.getUserByUsername(username);
+    const user = await getUserByUsername(username);
     if (user) {
       return res.status(409).send({
         message: 'Username already exists',
@@ -99,11 +111,7 @@ router.post(
     }
 
     // 5. 사용자를 블록체인에 등록합니다.
-    const transactionHash = await web3Controller.registerUser(
-      email,
-      username,
-      password
-    );
+    const transactionHash = await registerUser(email, username, password);
 
     // 6. 사용자를 클라이언트에 반환합니다.
     return res.status(201).send({
@@ -138,17 +146,18 @@ router.post(
  *                 transactionHash:
  *                   type: string
  */
-router.post(
+apiRoutes.post(
   '/upload-photo',
   handleError(async (req, res) => {
     // 1. 클라이언트 요청에서 업로드할 사진 데이터를 받아옵니다.
     const { file } = req.body;
+    console.log(file);
 
     // 2. 사진 데이터를 IPFS에 저장합니다.
-    const ipfsHash = await web3Controller.uploadPhotoToIPFS(file);
+    const ipfsHash = await uploadPhotoToIPFS(file);
 
     // 3. 사진 정보를 블록체인에 등록합니다.
-    const transactionHash = await web3Controller.registerPhoto(ipfsHash);
+    const transactionHash = await registerPhoto(ipfsHash);
 
     // 4. 사진 업로드 결과를 클라이언트에 보냅니다.
     return res.status(201).send({
@@ -185,17 +194,17 @@ router.post(
  *                 transactionHash:
  *                   type: string
  */
-router.post(
+apiRoutes.post(
   '/register-nft',
   handleError(async (req, res) => {
     // 1. 클라이언트 요청에서 NFT로 등록할 사진 정보를 받아옵니다.
     const { ipfsHash, price } = req.body;
 
     // 2. NFT를 생성합니다.
-    const tokenId = await web3Controller.createNFT(ipfsHash, price);
+    const tokenId = await createNFT(ipfsHash, price);
 
     // 3. NFT를 블록체인에 등록합니다.
-    const transactionHash = await web3Controller.registerNFT(tokenId);
+    const transactionHash = await registerNFT(tokenId);
 
     // 4. NFT 등록 결과를 클라이언트에 보냅니다.
     return res.status(201).send({
@@ -215,7 +224,7 @@ router.post(
  *       200:
  *         description: NFT가 성공적으로 구매되었습니다.
  */
-router.post('/buy', handleError(marketplaceController.buyNFT));
+apiRoutes.post('/buy', handleError(buyNFT));
 /**
  * @swagger
  * /update:
@@ -226,7 +235,7 @@ router.post('/buy', handleError(marketplaceController.buyNFT));
  *       200:
  *         description: NFT가 성공적으로 업데이트되었습니다.
  */
-router.post('/update', handleError(marketplaceController.updateNFT));
+apiRoutes.post('/update', handleError(updateNFT));
 /**
  * @swagger
  * /delete:
@@ -237,7 +246,7 @@ router.post('/update', handleError(marketplaceController.updateNFT));
  *       200:
  *         description: NFT가 성공적으로 삭제되었습니다.
  */
-router.post('/delete', handleError(marketplaceController.deleteNFT));
+apiRoutes.post('/delete', handleError(deleteNFT));
 
 // 사용자 프로필, 거래 내역, 코인 잔액, 구매한 사진 조회를 위한 라우트를 정의합니다.
 /**
@@ -250,7 +259,7 @@ router.post('/delete', handleError(marketplaceController.deleteNFT));
  *       200:
  *         description: 사용자 프로필이 성공적으로 조회되었습니다.
  */
-router.get('/profile', handleError(profileController.getProfile));
+apiRoutes.get('/profile', handleError(getProfile));
 /**
  * @swagger
  * /transaction-history:
@@ -262,10 +271,7 @@ router.get('/profile', handleError(profileController.getProfile));
  *         description: 거래 내역이 성공적으로 조회되었습니다.
  */
 
-router.get(
-  '/transaction-history',
-  handleError(transactionHistoryController.getTransactionHistory)
-);
+apiRoutes.get('/transaction-history', handleError(getTransactionHistory));
 /**
  * @swagger
  * /coin-balance:
@@ -277,7 +283,7 @@ router.get(
  *         description: 코인 잔액이 성공적으로 조회되었습니다.
  */
 
-router.get('/coin-balance', handleError(coinBalanceController.getCoinBalance));
+apiRoutes.get('/coin-balance', handleError(getCoinBalance));
 /**
  * @swagger
  * /purchased-photos:
@@ -288,10 +294,7 @@ router.get('/coin-balance', handleError(coinBalanceController.getCoinBalance));
  *       200:
  *         description: 구매한 사진이 성공적으로 조회되었습니다.
  */
-router.get(
-  '/purchased-photos',
-  handleError(purchasedPhotosController.getPurchasedPhotos)
-);
+apiRoutes.get('/purchased-photos', handleError(getPurchasedPhotos));
 
 // 라우터를 모듈로 내보냅니다.
-module.exports = router;
+export default apiRoutes;

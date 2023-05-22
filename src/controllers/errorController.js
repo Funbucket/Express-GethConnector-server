@@ -1,5 +1,5 @@
 // handleError는 에러를 처리하는 미들웨어 함수입니다.
-exports.handleError = (err, req, res) => {
+const handleError = (err, req, res) => {
   err.statusCode = err.statusCode || 500; // 에러의 상태 코드를 설정합니다. 없는 경우 500으로 설정합니다.
   err.status = err.status || 'error'; // 에러의 상태를 설정합니다. 없는 경우 'error'로 설정합니다.
 
@@ -32,3 +32,5 @@ exports.handleError = (err, req, res) => {
     }
   }
 };
+
+export default handleError;

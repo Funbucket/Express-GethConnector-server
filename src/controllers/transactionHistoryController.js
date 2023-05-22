@@ -1,5 +1,5 @@
 // 사용자의 거래 기록을 가져오는 함수를 정의합니다.
-exports.getTransactionHistory = async (req, res) => {
+const getTransactionHistory = async (req, res) => {
   try {
     // 요청 본문에 'userAddress'가 존재하는지 검증합니다.
     validateRequestBody(req.body, ['userAddress']);
@@ -21,3 +21,5 @@ exports.getTransactionHistory = async (req, res) => {
     handleBlockchainError(res, error);
   }
 };
+
+export default getTransactionHistory;
