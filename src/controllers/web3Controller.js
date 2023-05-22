@@ -19,12 +19,19 @@ exports.getContractInstance = (web3, contractPath, contractName) => {
   const source = fs.readFileSync(contractPath, "utf8");
   // 솔리디티 코드를 컴파일합니다.
   const compiledContract = solc.compile(source, 1);
+
+  // 컴파일된 계약이 있는지 확인
+  if (!compiledContract.contracts || !compiledContract.contracts[contractName]) {
+    throw new Error(`Unable to load contract: ${contractName}`);
+  }
+
   // 컴파일된 계약에서 ABI(Application Binary Interface)를 가져옵니다.
   const contractABI = compiledContract.contracts[contractName].interface;
 
   // 새로운 스마트 계약 인스턴스를 생성하고 반환합니다.
   return new web3.eth.Contract(JSON.parse(contractABI), constants.CONTRACT_ADDRESS);
 };
+
 
 // 트랜잭션을 보내는 함수를 정의합니다.
 exports.sendTransaction = async (contract, address, gasLimit, method, ...methodArgs) => {

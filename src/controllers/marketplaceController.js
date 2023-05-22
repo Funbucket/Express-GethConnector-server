@@ -2,8 +2,16 @@
 const Web3Controller = require("../controllers/web3Controller");
 // Web3 인스턴스를 생성합니다.
 const web3 = Web3Controller.createWeb3Instance();
+
 // NFTPhoto 스마트 계약의 인스턴스를 가져옵니다.
-const contract = Web3Controller.getContractInstance(web3, "./src/contracts/NFTPhoto.sol", "NFTPhoto");
+let contract;
+try {
+  contract = Web3Controller.getContractInstance(web3, "./src/contracts/NFTPhoto.sol", "NFTPhoto");
+} catch (error) {
+  console.error(`Failed to get contract instance: ${error.message}`);
+  process.exit(1);
+}
+
 
 // 블록체인 에러를 처리하는 함수입니다. 에러 메시지를 함께 보내는 응답을 생성합니다.
 const handleBlockchainError = (res, error) => {
