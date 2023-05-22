@@ -54,20 +54,6 @@ contract NFTPhoto is ERC721, Ownable {
         return newTokenId;
     }
 
-    // 특정 토큰을 구매하는 함수입니다.
-    function createPhotoNFT(string memory _tokenURI, uint256 _tokenPrice) public onlyOwner returns (uint256) {
-        uint256 newTokenId = tokenCounter;
-        _mint(msg.sender, newTokenId);
-        _tokenURIs[newTokenId] = _tokenURI;
-        _tokenPrices[newTokenId] = _tokenPrice;
-        tokenCounter = tokenCounter + 1;
-
-        emit TokenCreated(newTokenId, _tokenURI, _tokenPrice);
-
-        return newTokenId;
-    }
-
-
     // 특정 토큰의 가격을 업데이트하는 함수입니다. 오직 토큰의 소유자만 호출할 수 있습니다.
     function updatePhotoNFTPrice(uint256 tokenId, uint256 newPrice) public {
         require(ownerOf(tokenId) == msg.sender, "Not the owner of the NFT");  // 호출자가 토큰의 소유자인지 확인합니다.
