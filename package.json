@@ -5,7 +5,7 @@
   "main": "index.js",
   "directories": {
     "test": "test"
-  }, 
+  },
   "scripts": {
     "start": "node src/index.js",
     "test": "jest"
@@ -26,10 +26,13 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "jest": "latest",
-    "prettier": "2.8.8"
+    "prettier": "2.8.8",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.3"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.2",
+    "@truffle/contract": "^4.6.22",
     "chai": "^4.3.7",
     "solc": "^0.4.26",
     "supertest": "^6.3.3"
