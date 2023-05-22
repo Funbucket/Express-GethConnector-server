@@ -3,7 +3,7 @@ const cors = require('cors'); // 웹 애플리케이션 간 자원 공유를 가
 const apiRoutes = require('./routes/apiRoutes'); // API 라우트 설정을 가져옵니다.
 const errorController = require('./controllers/errorController'); // 에러 처리 컨트롤러를 가져옵니다.
 const contract = require("@truffle/contract");
-const contractJSON = require("../../build/contracts/NFTPhoto.json");
+const contractJSON = require("../build/contracts/NFTPhoto.json");
 
 let NFTPhoto = contract(contractJSON);
 NFTPhoto.setProvider(web3Instance.currentProvider);
