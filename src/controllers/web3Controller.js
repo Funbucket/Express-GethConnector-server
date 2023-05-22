@@ -6,7 +6,7 @@ const constants = require('../constants');
 // Truffle contract를 가져옵니다.
 const TruffleContract = require("@truffle/contract");
 // NFTPhoto 컨트랙트 아티팩트를 가져옵니다.
-const contractJSON = require("../build/contracts/NFTPhoto.json");
+const contractJSON = require("../../build/contracts/NFTPhoto.json");
 
 // Web3 인스턴스를 생성하는 함수를 정의합니다.
 exports.createWeb3Instance = () => {
