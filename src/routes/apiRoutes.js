@@ -12,7 +12,63 @@ const purchasedPhotosController = require('../controllers/purchasedPhotosControl
 const handleError = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 
-// 회원가입 처리를 위한 라우트를 정의합니다.
+/**
+ * @swagger
+ * /register:
+ *   post:
+ *     summary: 회원가입
+ *     description: 클라이언트의 회원가입 요청을 처리합니다.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: 성공적으로 회원가입되었습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 transactionHash:
+ *                   type: string
+ *       400:
+ *         description: 잘못된 요청 본문입니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       401:
+ *         description: MetaMask 지갑이 연결되어 있지 않습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       409:
+ *         description: 이미 존재하는 사용자 이름입니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 router.post(
   '/register',
   handleError(async (req, res) => {
@@ -56,7 +112,32 @@ router.post(
   })
 );
 
-// 사진 업로드 처리를 위한 라우트를 정의합니다.
+/**
+ * @swagger
+ * /upload-photo:
+ *   post:
+ *     summary: 사진 업로드
+ *     description: 클라이언트의 사진 업로드 요청을 처리합니다.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: 사진이 성공적으로 업로드되었습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 transactionHash:
+ *                   type: string
+ */
 router.post(
   '/upload-photo',
   handleError(async (req, res) => {
@@ -76,7 +157,34 @@ router.post(
   })
 );
 
-// NFT 등록 처리를 위한 라우트를 정의합니다.
+/**
+ * @swagger
+ * /register-nft:
+ *   post:
+ *     summary: NFT 등록
+ *     description: 클라이언트의 NFT 등록 요청을 처리합니다.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ipfsHash:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: NFT가 성공적으로 등록되었습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 transactionHash:
+ *                   type: string
+ */
 router.post(
   '/register-nft',
   handleError(async (req, res) => {
@@ -97,17 +205,89 @@ router.post(
 );
 
 // NFT 구매, 업데이트, 삭제 처리를 위한 라우트를 정의합니다.
+/**
+ * @swagger
+ * /buy:
+ *   post:
+ *     summary: NFT 구매
+ *     description: 클라이언트의 NFT 구매 요청을 처리합니다.
+ *     responses:
+ *       200:
+ *         description: NFT가 성공적으로 구매되었습니다.
+ */
 router.post('/buy', handleError(marketplaceController.buyNFT));
+/**
+ * @swagger
+ * /update:
+ *   post:
+ *     summary: NFT 업데이트
+ *     description: 클라이언트의 NFT 업데이트 요청을 처리합니다.
+ *     responses:
+ *       200:
+ *         description: NFT가 성공적으로 업데이트되었습니다.
+ */
 router.post('/update', handleError(marketplaceController.updateNFT));
+/**
+ * @swagger
+ * /delete:
+ *   post:
+ *     summary: NFT 삭제
+ *     description: 클라이언트의 NFT 삭제 요청을 처리합니다.
+ *     responses:
+ *       200:
+ *         description: NFT가 성공적으로 삭제되었습니다.
+ */
 router.post('/delete', handleError(marketplaceController.deleteNFT));
 
 // 사용자 프로필, 거래 내역, 코인 잔액, 구매한 사진 조회를 위한 라우트를 정의합니다.
+/**
+ * @swagger
+ * /profile:
+ *   get:
+ *     summary: 사용자 프로필 조회
+ *     description: 클라이언트의 사용자 프로필 조회 요청을 처리합니다.
+ *     responses:
+ *       200:
+ *         description: 사용자 프로필이 성공적으로 조회되었습니다.
+ */
 router.get('/profile', handleError(profileController.getProfile));
+/**
+ * @swagger
+ * /transaction-history:
+ *   get:
+ *     summary: 거래 내역 조회
+ *     description: 클라이언트의 거래 내역 조회 요청을 처리합니다.
+ *     responses:
+ *       200:
+ *         description: 거래 내역이 성공적으로 조회되었습니다.
+ */
+
 router.get(
   '/transaction-history',
   handleError(transactionHistoryController.getTransactionHistory)
 );
+/**
+ * @swagger
+ * /coin-balance:
+ *   get:
+ *     summary: 코인 잔액 조회
+ *     description: 클라이언트의 코인 잔액 조회 요청을 처리합니다.
+ *     responses:
+ *       200:
+ *         description: 코인 잔액이 성공적으로 조회되었습니다.
+ */
+
 router.get('/coin-balance', handleError(coinBalanceController.getCoinBalance));
+/**
+ * @swagger
+ * /purchased-photos:
+ *   get:
+ *     summary: 구매한 사진 조회
+ *     description: 클라이언트의 구매한 사진 조회 요청을 처리합니다.
+ *     responses:
+ *       200:
+ *         description: 구매한 사진이 성공적으로 조회되었습니다.
+ */
 router.get(
   '/purchased-photos',
   handleError(purchasedPhotosController.getPurchasedPhotos)
