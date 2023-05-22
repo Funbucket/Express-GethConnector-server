@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
 
 // OpenZeppelin 라이브러리의 Smart Contracts를 가져옵니다.
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -21,7 +22,7 @@ contract NFTPhoto is ERC721, Ownable {
     event TokenPriceUpdated(uint256 tokenId, uint256 newPrice);
 
     // 컨트랙트의 생성자 함수입니다.
-    constructor () public ERC721("NFTPhoto", "NFTP") {
+    constructor () ERC721("NFTPhoto", "NFTP") {
         tokenCounter = 0;  // 초기 토큰 카운터를 0으로 설정합니다.
     }
 
@@ -54,18 +55,18 @@ contract NFTPhoto is ERC721, Ownable {
     }
 
     // 특정 토큰을 구매하는 함수입니다.
-    function buyPhotoNFT(uint256 tokenId) public payable {
-        require(msg.value >= _tokenPrices[tokenId], "Not enough funds to purchase the NFT");  // 구매자가 충분한 이더를 가지고 있는지 확인합니다.
-        require(ownerOf(tokenId) != msg.sender, "Can't buy your own NFT");  // 구매자가 현재 토큰의 소유자가 아닌지 확인합니다.
+    function createPhotoNFT(string memory _tokenURI, uint256 _tokenPrice) public onlyOwner returns (uint256) {
+        uint256 newTokenId = tokenCounter;
+        _mint(msg.sender, newTokenId);
+        _tokenURIs[newTokenId] = _tokenURI;
+        _tokenPrices[newTokenId] = _tokenPrice;
+        tokenCounter = tokenCounter + 1;
 
-        address previousOwner = ownerOf(tokenId);  // 토큰의 이전 소유자를 가져옵니다.
-        address newOwner = msg.sender;  // 토큰의 새로운 소유자를 가져옵니다.
+        emit TokenCreated(newTokenId, _tokenURI, _tokenPrice);
 
-        _transfer(previousOwner, newOwner, tokenId);  // 토큰을 이전 소유자로부터 새로운 소유자로 전송합니다.
-        payable(previousOwner).sendValue(msg.value);  // 이전 소유자에게 이더를 전송합니다.
-
-        emit TokenPurchased(tokenId, previousOwner, newOwner, msg.value);  // 이벤트를 발생시킵니다.
+        return newTokenId;
     }
+
 
     // 특정 토큰의 가격을 업데이트하는 함수입니다. 오직 토큰의 소유자만 호출할 수 있습니다.
     function updatePhotoNFTPrice(uint256 tokenId, uint256 newPrice) public {
