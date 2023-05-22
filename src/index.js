@@ -1,14 +1,12 @@
-const express = require('express'); // Express.js 프레임워크를 가져옵니다.
-const cors = require('cors'); // 웹 애플리케이션 간 자원 공유를 가능하게 하는 CORS(Cross-Origin Resource Sharing)를 위한 패키지를 가져옵니다.
-const apiRoutes = require('./routes/apiRoutes'); // API 라우트 설정을 가져옵니다.
-const errorController = require('./controllers/errorController'); // 에러 처리 컨트롤러를 가져옵니다.
-const contract = require('@truffle/contract');
-const contractJSON = require('../build/contracts/NFTPhoto.json');
-const { swaggerUi, specs } = require('../swagger/swagger');
+import express from 'express'; // Express.js를 위한 패키지를 가져옵니다.
+import cors from 'cors'; // CORS를 위한 패키지를 가져옵니다.
+import { default as apiRoutes } from './routes/apiRoutes.js';
+import contract from '@truffle/contract';
+import { swaggerUi, specs } from '../swagger/swagger.js';
+import { createWeb3Instance } from './controllers/web3Controller.js';
 
-let NFTPhoto = contract(contractJSON);
-const web3Instance =
-  require('./controllers/web3Controller').createWeb3Instance();
+let NFTPhoto = contract('../build/contracts/NFTPhoto.json');
+const web3Instance = createWeb3Instance();
 
 NFTPhoto.setProvider(web3Instance.currentProvider);
 
@@ -40,3 +38,50 @@ app.listen(port, () => {
   // 설정한 포트에서 서버를 실행합니다.
   console.log(`Server is now up and running on port ${port}`); // 서버가 실행되면 콘솔에 로그를 출력합니다.
 });
+
+// const { create } = require('ipfs-http-client');
+
+// import { create } from 'ipfs-http-client';
+
+// // // connect to the default API address http://localhost:5001
+// const client = create();
+
+// // // call Core API methods
+// const { cid } = client.add('Hello worl  d!');
+// console.log(cid);
+
+// const fs = require('fs');
+// const Client = require('ipfs-http-client');
+
+// const ipfs = Client.create({
+//   host: 'localhost',
+//   port: '80',
+//   protocol: 'http',
+// });
+
+// const testFile = fs.readFileSync('./ipfs_upload_testfile.txt', 'utf8');
+// const testBuffer = Buffer.from(testFile);
+
+// async function go() {
+//   const result = await ipfs.add(testBuffer);
+//   console.log(result);
+// }
+// go();
+
+// const ipfsAPI = require('ipfs-api');
+// const ipfs = ipfsAPI('localhost', '5000', { protocol: 'http' });
+// //read file
+// const fs = require('fs');
+// //read file
+// let testFile = fs.readFileSync('./ipfs_upload_testfile.txt', 'utf8');
+
+// //input buffer
+// let testBuffer = Buffer.from(testFile); //new Buffer -> Buffer.from
+
+// //upload file to ipfs
+// ipfs.files.add(testBuffer, (err, file) => {
+//   if (err) {
+//     console.log(err);
+//   }
+//   console.log(file);
+// });

@@ -1,5 +1,5 @@
 // 사용자가 구매한 사진 NFT들을 가져오는 함수를 정의합니다.
-exports.getPurchasedPhotos = async (req, res) => {
+const getPurchasedPhotos = async (req, res) => {
   try {
     // 요청 본문에 'userAddress'가 존재하는지 검증합니다.
     validateRequestBody(req.body, ['userAddress']);
@@ -19,3 +19,5 @@ exports.getPurchasedPhotos = async (req, res) => {
     handleBlockchainError(res, error);
   }
 };
+
+export default getPurchasedPhotos;

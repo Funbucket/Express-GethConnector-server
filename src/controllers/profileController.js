@@ -1,5 +1,5 @@
 // 사용자의 프로필 정보를 조회하는 함수입니다.
-exports.getProfile = async (req, res) => {
+const getProfile = async (req, res) => {
   try {
     // 요청 본문에서 사용자 주소를 가져옵니다.
     const userAddress = req.body.userAddress;
@@ -17,3 +17,5 @@ exports.getProfile = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 };
+
+export default getProfile;

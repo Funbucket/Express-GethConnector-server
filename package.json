@@ -6,6 +6,9 @@
   "directories": {
     "test": "test"
   },
+  "import": {
+    "#controllers/*": "./src/controllers/*"
+  },
   "scripts": {
     "start": "node src/index.js",
     "test": "jest"
@@ -34,7 +37,10 @@
     "@openzeppelin/contracts": "^4.3.2",
     "@truffle/contract": "^4.6.22",
     "chai": "^4.3.7",
+    "ipfs-api": "^26.1.2",
+    "ipfs-http-client": "^60.0.0",
     "solc": "^0.4.26",
     "supertest": "^6.3.3"
-  }
+  },
+  "type": "module"
 }

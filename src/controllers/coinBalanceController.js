@@ -1,5 +1,5 @@
 // getCoinBalance는 사용자의 코인 잔액을 조회하는 함수입니다.
-exports.getCoinBalance = async (req, res, next) => {
+const getCoinBalance = async (req, res, next) => {
   try {
     const userAddress = req.body.userAddress; // 사용자의 주소를 요청 본문으로부터 가져옵니다.
 
@@ -25,3 +25,5 @@ exports.getCoinBalance = async (req, res, next) => {
     next(error);
   }
 };
+
+export default getCoinBalance;
