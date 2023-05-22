@@ -24,4 +24,6 @@ module.exports = {
         },
         // 더 많은 네트워크를 추가할 수 있습니다.
     },
+    // 컨트랙트 소스 코드 위치 설정
+    contracts_directory: './src/contracts'
 };
