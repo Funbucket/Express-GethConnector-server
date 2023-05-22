@@ -5,7 +5,7 @@
   "main": "index.js",
   "directories": {
     "test": "test"
-  },
+  }, 
   "scripts": {
     "start": "node src/index.js",
     "test": "jest"
@@ -22,12 +22,16 @@
   },
   "homepage": "https://github.com/eogml0716/Express-GethConnector#readme",
   "devDependencies": {
-    "jest": "latest"
+    "eslint": "^8.41.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "latest",
+    "prettier": "2.8.8"
   },
   "dependencies": {
+    "@openzeppelin/contracts": "^4.3.2",
     "chai": "^4.3.7",
     "solc": "^0.4.26",
-    "supertest": "^6.3.3",
-    "@openzeppelin/contracts": "^4.3.2"
+    "supertest": "^6.3.3"
   }
 }
