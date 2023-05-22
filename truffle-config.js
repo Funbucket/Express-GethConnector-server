@@ -7,11 +7,21 @@ module.exports = {
     },
     // 네트워크 설정
     networks: {
-        development: { // 개발 네트워크 설정
-            host: "127.0.0.1", // Ganache가 로컬 머신에서 실행되는 경우
-            port: 7545, // Ganache 기본 포트
-            network_id: "*", // 네트워크 ID
+        node1: { // Node1 설정
+            host: "168.188.129.232",
+            port: 80,
+            network_id: "*",
         },
-        // 다른 네트워크 설정 (테스트 넷 또는 메인 넷)도 추가할 수 있습니다.
+        node2: { // Node2 설정
+            host: "168.188.129.231",
+            port: 80,
+            network_id: "*",
+        },
+        node3: { // Node3 설정
+            host: "168.188.129.206",
+            port: 80,
+            network_id: "*",
+        },
+        // 더 많은 네트워크를 추가할 수 있습니다.
     },
 };
