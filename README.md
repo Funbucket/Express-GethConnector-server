@@ -1,8 +1,5 @@
 # Express-GethConnector
 졸업프로젝트 server1
-
-# Express-GethConnector
-
 Express-GethConnector는 Ethereum 블록체인과의 상호작용을 제공하는 Express.js 기반의 백엔드 서비스입니다. 
 
 ## Description
