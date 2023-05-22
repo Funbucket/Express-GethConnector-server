@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 // ERC721 및 Ownable의 기능을 상속받습니다.
 contract NFTPhoto is ERC721, Ownable {
     // Address 라이브러리를 사용하여 주소 관련 기능을 사용할 수 있습니다.
-    using Address for address payable;
+    using Address for address;
 
     uint256 public tokenCounter; // 현재까지 생성된 토큰 수를 추적하는 변수입니다.
     mapping(uint256 => string) private _tokenURIs; // 각 토큰의 URI를 저장하는 맵입니다.
