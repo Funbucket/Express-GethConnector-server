@@ -30,6 +30,8 @@
     "node": true,
     // jest 테스트를 위한 설정
     "jest": true,
+    "constants": true
+
   },
   // ESLint가 무시할 디렉토리, 파일을 설정
   "ignorePatterns": [
