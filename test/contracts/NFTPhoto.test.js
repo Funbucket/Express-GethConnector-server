@@ -1,5 +1,5 @@
 const { assert } = require('chai'); // 'chai'라는 라이브러리에서 'assert' 함수를 가져옵니다. 이 함수는 단언(assertion)을 할 때 사용됩니다.
-const NFTPhoto = artifacts.require('./NFTPhoto.sol'); // Truffle 프레임워크를 사용하여 스마트 컨트랙트 'NFTPhoto'를 가져옵니다.
+const NFTPhoto = artifacts.require('../../src/contracts/NFTPhoto.sol');
 
 // 'contract' 함수는 테스트를 그룹화하는 데 사용되며, 여기서는 'NFTPhoto' 컨트랙트에 대한 테스트를 그룹화합니다.
 contract('NFTPhoto', function(accounts) {
