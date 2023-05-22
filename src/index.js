@@ -6,13 +6,12 @@ const contract = require("@truffle/contract");
 const contractJSON = require("../build/contracts/NFTPhoto.json");
 
 let NFTPhoto = contract(contractJSON);
-NFTPhoto.setProvider(web3Instance.currentProvider);
 
 const web3Instance =
     require('./controllers/web3Controller').createWeb3Instance();
 const getCoinBalanceFromBlockchain = require('./controllers/web3Controller/getCoinBalanceFromBlockchain');
 
-console.log('hello', getCoinBalanceFromBlockchain(web3Instance, '0x123'));
+NFTPhoto.setProvider(web3Instance.currentProvider);
 
 const app = express(); // Express.js 애플리케이션을 생성합니다.
 // JSON 데이터를 파싱하기 위한 미들웨어를 설정합니다.
