@@ -1,12 +1,9 @@
-import * as IPFS from 'ipfs-core';
+import { create } from 'ipfs-http-client';
 
-let ipfs;
+const ipfs = create('http://localhost:5001');
 
-export const initIPFS = async () => {
-  ipfs = await IPFS.create();
-};
-
-export const addFile = async (file) => {
+export const addFile = async ({ path, content }) => {
+  const file = { path: path, content: Buffer.from(content) };
   const fileAdded = await ipfs.add(file);
   return fileAdded.cid.toString();
 };
