@@ -5,8 +5,7 @@ import {
   updatePhotoNFTPrice,
   deletePhotoNFT,
 } from './web3Controller.js';
-import { initIPFS, addFile, getFile } from '../ipfs/ipfsService'; // <-- IPFS 관련 함수를 import
-
+import { initIPFS, addFile } from '../ipfs/ipfsService.js'; // <-- IPFS 관련 함수를 import
 
 // Web3 인스턴스를 생성합니다.
 const web3 = createWeb3Instance();
@@ -14,7 +13,11 @@ const web3 = createWeb3Instance();
 // NFTPhoto 스마트 계약의 인스턴스를 가져옵니다.
 let contract;
 try {
-  contract = getContractInstance(web3, './src/contracts/NFTPhoto.sol', 'NFTPhoto');
+  contract = getContractInstance(
+    web3,
+    './src/contracts/NFTPhoto.sol',
+    'NFTPhoto'
+  );
 } catch (error) {
   console.error(`Failed to get contract instance: ${error.message}`);
   process.exit(1);
