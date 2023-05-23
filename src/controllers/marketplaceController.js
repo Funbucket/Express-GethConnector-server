@@ -5,6 +5,8 @@ import {
   updatePhotoNFTPrice,
   deletePhotoNFT,
 } from './web3Controller.js';
+import { initIPFS, addFile, getFile } from '../ipfs/ipfsService'; // <-- IPFS 관련 함수를 import
+
 
 // Web3 인스턴스를 생성합니다.
 const web3 = createWeb3Instance();
@@ -12,15 +14,14 @@ const web3 = createWeb3Instance();
 // NFTPhoto 스마트 계약의 인스턴스를 가져옵니다.
 let contract;
 try {
-  contract = getContractInstance(
-    web3,
-    './src/contracts/NFTPhoto.sol',
-    'NFTPhoto'
-  );
+  contract = getContractInstance(web3, './src/contracts/NFTPhoto.sol', 'NFTPhoto');
 } catch (error) {
   console.error(`Failed to get contract instance: ${error.message}`);
   process.exit(1);
 }
+
+// IPFS 인스턴스를 생성합니다.
+initIPFS();
 
 // 블록체인 에러를 처리하는 함수입니다. 에러 메시지를 함께 보내는 응답을 생성합니다.
 export const handleBlockchainError = (res, error) => {
@@ -33,6 +34,32 @@ export const validateRequestBody = (body, requiredFields) => {
     if (!body[field]) {
       throw new Error(`Missing required field: ${field}`);
     }
+  }
+};
+
+// NFT를 생성하는 엔드포인트입니다.
+export const createNFT = async (req, res) => {
+  try {
+    // 필요한 요청 본문 필드와 파일이 모두 존재하는지 검증합니다.
+    validateRequestBody(req.body, ['ownerAddress', 'price']);
+    validateRequestBody(req.files, ['photo']);
+
+    // 요청 본문과 파일에서 필요한 정보를 추출합니다.
+    const { ownerAddress, price } = req.body;
+    const photo = req.files.photo;
+
+    // IPFS로 파일을 추가합니다.
+    const cid = await addFile(photo.data);
+
+    // Web3Controller를 통해 블록체인에 NFT 생성 트랜잭션을 발생시킵니다.
+    // 이때 IPFS에서 받은 CID를 사용합니다.
+    await createPhotoNFT(contract, ownerAddress, price, cid);
+
+    // 생성 성공 메시지와 CID를 응답으로 보냅니다.
+    res.send({ message: 'Successfully created NFT', cid });
+  } catch (error) {
+    // 발생한 에러를 처리합니다.
+    handleBlockchainError(res, error);
   }
 };
 
