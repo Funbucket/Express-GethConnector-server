@@ -4,6 +4,7 @@ import { default as apiRoutes } from './routes/apiRoutes.js';
 import contract from '@truffle/contract';
 import { swaggerUi, specs } from '../swagger/swagger.js';
 import { createWeb3Instance } from './controllers/web3Controller.js';
+import handleError from './controllers/errorController.js';
 
 let NFTPhoto = contract('../build/contracts/NFTPhoto.json');
 const web3Instance = createWeb3Instance();
@@ -30,9 +31,9 @@ app.use((err, req, res, next) => {
     return next(err);
   }
   // 에러를 처리하는 컨트롤러를 호출합니다.
-  errorController.handleError(req, res, err); // 개선된 에러 처리기
+  handleError(req, res, err); // 개선된 에러 처리기
 });
-const port = process.env.PORT || 5000; // 서버가 실행될 포트를 설정합니다. 환경 변수로부터 PORT 값을 얻거나 없을 경우 5000을 사용합니다.
+const port = process.env.PORT || 80; // 서버가 실행될 포트를 설정합니다. 환경 변수로부터 PORT 값을 얻거나 없을 경우 5000을 사용합니다.
 
 app.listen(port, () => {
   // 설정한 포트에서 서버를 실행합니다.

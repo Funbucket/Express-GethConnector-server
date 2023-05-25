@@ -1,6 +1,9 @@
 const constants = {
   // 이더리움 네트워크 설정들입니다.
   networks: {
+    node: {
+      url: 'http://168.188.129.232:80',
+    },
     development: {
       // 개발용 네트워크 설정입니다.
       host: 'localhost', // 로컬에서 실행되는 Ethereum 노드의 주소입니다.

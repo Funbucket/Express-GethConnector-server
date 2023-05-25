@@ -296,5 +296,6 @@ apiRoutes.get('/coin-balance', handleError(getCoinBalance));
  */
 apiRoutes.get('/purchased-photos', handleError(getPurchasedPhotos));
 
+apiRoutes.get('/accounts', getAccounts);
 // 라우터를 모듈로 내보냅니다.
 export default apiRoutes;

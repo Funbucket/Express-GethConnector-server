@@ -10,7 +10,9 @@ import TruffleContract from '@truffle/contract';
 // Web3 인스턴스를 생성하는 함수를 정의합니다.
 export const createWeb3Instance = () => {
   // 새로운 Web3 인스턴스를 생성하고 HTTP 프로바이더를 사용하여 이더리움 노드에 연결합니다.
-  return new Web3(new Web3.providers.HttpProvider(constants.INFURA_URI));
+  return new Web3(
+    new Web3.providers.HttpProvider('http://168.188.129.231:8080')
+  );
 };
 
 // 스마트 계약의 인스턴스를 가져오는 함수를 정의합니다.
@@ -124,10 +126,16 @@ export const deletePhotoNFT = async (
 //   }
 // };
 
-// MetaMask와 연결하는 함수
-export async function getAccounts() {
-  // MetaMask와 연결하는 로직을 구현합니다.
-}
+// 계좌 목록을 가져오는 컨트롤러 함수
+export const getAccounts = async (req, res, next) => {
+  try {
+    const accounts = await createWeb3Instance().eth.getAccounts();
+    res.send(accounts);
+  } catch (e) {
+    console.log(e);
+    next(e);
+  }
+};
 
 // 사용자 이름으로 사용자를 조회하는 함수
 export async function getUserByUsername(username) {
